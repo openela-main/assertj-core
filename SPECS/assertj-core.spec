@@ -2,7 +2,7 @@
 
 Name:           assertj-core
 Version:        3.19.0
-Release:        5%{?dist}
+Release:        6%{?dist}
 Summary:        Library of assertions similar to fest-assert
 License:        ASL 2.0
 URL:            https://joel-costigliola.github.io/assertj/
@@ -72,6 +72,9 @@ rm -r src/test/java/org/assertj/core/internal/{Paths*.java,paths}
 %license LICENSE.txt
 
 %changelog
+* Tue Nov 19 2024 Marián Konček <mkoncek@redhat.com> - 3.19.0-6
+- Rebuild with regenerated Requires on Java
+
 * Mon Aug 09 2021 Mohan Boddu <mboddu@redhat.com> - 3.19.0-5
 - Rebuilt for IMA sigs, glibc 2.34, aarch64 flags
   Related: rhbz#1991688
