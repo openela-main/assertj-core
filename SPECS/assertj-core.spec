@@ -2,13 +2,14 @@
 
 Name:           assertj-core
 Version:        3.19.0
-Release:        6%{?dist}
+Release:        9%{?dist}
 Summary:        Library of assertions similar to fest-assert
 License:        ASL 2.0
 URL:            https://joel-costigliola.github.io/assertj/
 Source0:        https://github.com/joel-costigliola/assertj-core/archive/assertj-core-%{version}.tar.gz
 
 BuildArch:      noarch
+ExclusiveArch:  aarch64 ppc64le s390x x86_64 noarch
 
 BuildRequires:  maven-local
 %if %{with bootstrap}
@@ -68,10 +69,18 @@ rm -r src/test/java/org/assertj/core/internal/{Paths*.java,paths}
 %license LICENSE.txt
 
 %files javadoc -f .mfiles-javadoc
-%doc CONTRIBUTING.md
 %license LICENSE.txt
 
 %changelog
+* Sun Nov 24 2024 Marián Konček <mkoncek@redhat.com> - 3.19.0-9
+- Do not install CONTRIBUTING.md in javadoc package
+
+* Sat Nov 23 2024 Marián Konček <mkoncek@redhat.com> - 3.19.0-8
+- Add noarch to ExclusiveArch
+
+* Fri Nov 22 2024 Marián Konček <mkoncek@redhat.com> - 3.19.0-7
+- Disable building on i686
+
 * Tue Nov 19 2024 Marián Konček <mkoncek@redhat.com> - 3.19.0-6
 - Rebuild with regenerated Requires on Java
 
