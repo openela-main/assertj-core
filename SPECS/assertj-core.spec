@@ -1,0 +1,216 @@
+%bcond_with bootstrap
+
+Name:           assertj-core
+Version:        3.24.2
+Release:        9%{?dist}
+Summary:        Library of assertions similar to fest-assert
+License:        Apache-2.0
+URL:            https://joel-costigliola.github.io/assertj/
+Source0:        https://github.com/joel-costigliola/assertj-core/archive/assertj-build-%{version}.tar.gz
+
+BuildArch:      noarch
+ExclusiveArch:  %{java_arches} noarch
+
+%if %{with bootstrap}
+BuildRequires:  javapackages-bootstrap
+%else
+BuildRequires:  maven-local
+BuildRequires:  mvn(junit:junit)
+BuildRequires:  mvn(net.bytebuddy:byte-buddy)
+BuildRequires:  mvn(org.hamcrest:hamcrest)
+BuildRequires:  mvn(org.junit.jupiter:junit-jupiter-api)
+BuildRequires:  mvn(org.opentest4j:opentest4j)
+%endif
+
+%description
+A rich and intuitive set of strongly-typed assertions to use for unit testing
+(either with JUnit or TestNG).
+
+%package javadoc
+Summary:        API documentation for %{name}
+
+%description javadoc
+This package provides API documentation for %{name}.
+
+%prep
+%setup -q -n assertj-assertj-build-%{version}
+
+%pom_remove_plugin -r :maven-javadoc-plugin
+%pom_remove_plugin -r :maven-enforcer-plugin
+%pom_remove_plugin -r :jacoco-maven-plugin
+%pom_remove_plugin -r :yuicompressor-maven-plugin
+%pom_remove_plugin -r :bnd-maven-plugin
+%pom_remove_plugin -r :bnd-resolver-maven-plugin
+%pom_remove_plugin -r :bnd-testing-maven-plugin
+%pom_remove_plugin -r :nexus-staging-maven-plugin
+%pom_remove_plugin -r :license-maven-plugin
+%pom_remove_plugin -r :flatten-maven-plugin
+%pom_remove_dep -r :mockito-bom
+%pom_remove_dep -r :junit-bom
+
+%pom_disable_module assertj-core-kotlin assertj-tests/assertj-integration-tests
+%pom_disable_module assertj-core-groovy assertj-tests/assertj-integration-tests
+
+%pom_xpath_inject pom:plugins '
+<plugin>
+  <groupId>org.apache.maven.plugins</groupId>
+  <artifactId>maven-jar-plugin</artifactId>
+  <version>any</version>
+  <configuration>
+    <archive>
+      <manifestEntries>
+        <Multi-Release>true</Multi-Release>
+      </manifestEntries>
+    </archive>
+  </configuration>
+</plugin>' assertj-core
+
+%build
+%mvn_build -f -- -Dproject.build.sourceEncoding=UTF-8
+
+%install
+%mvn_install
+
+%files -f .mfiles
+%doc README.md CONTRIBUTING.md
+%license LICENSE.txt
+
+%files javadoc -f .mfiles-javadoc
+%doc CONTRIBUTING.md
+%license LICENSE.txt
+
+%changelog
+* Tue Oct 29 2024 Troy Dawson <tdawson@redhat.com> - 3.24.2-9
+- Bump release for October 2024 mass rebuild:
+  Resolves: RHEL-64018
+
+* Thu Aug 01 2024 Troy Dawson <tdawson@redhat.com> - 3.24.2-8
+- Bump release for Aug 2024 java mass rebuild
+
+* Mon Jun 24 2024 Troy Dawson <tdawson@redhat.com> - 3.24.2-7
+- Bump release for June 2024 mass rebuild
+
+* Mon Jan 22 2024 Fedora Release Engineering <releng@fedoraproject.org> - 3.24.2-6
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_40_Mass_Rebuild
+
+* Fri Jan 19 2024 Fedora Release Engineering <releng@fedoraproject.org> - 3.24.2-5
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_40_Mass_Rebuild
+
+* Fri Sep 01 2023 Mikolaj Izdebski <mizdebsk@redhat.com> - 3.24.2-4
+- Convert License tag to SPDX format
+
+* Wed Jul 19 2023 Fedora Release Engineering <releng@fedoraproject.org> - 3.24.2-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_39_Mass_Rebuild
+
+* Mon Feb 27 2023 Marian Koncek <mkoncek@redhat.com> - 3.24.2-2
+- Remove dependency on junit5-bom
+
+* Wed Feb 15 2023 Marian Koncek <mkoncek@redhat.com> - 3.24.2-1
+- Update to upstream version 3.24.2
+
+* Wed Jan 18 2023 Fedora Release Engineering <releng@fedoraproject.org> - 3.23.1-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_38_Mass_Rebuild
+
+* Wed Sep 07 2022 Marian Koncek <mkoncek@redhat.com> - 3.23.1-1
+- Update to upstream version 3.23.1
+
+* Wed Jul 20 2022 Fedora Release Engineering <releng@fedoraproject.org> - 3.19.0-6
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_37_Mass_Rebuild
+
+* Sat Feb 05 2022 Jiri Vanek <jvanek@redhat.com> - 3.19.0-5
+- Rebuilt for java-17-openjdk as system jdk
+
+* Wed Jan 19 2022 Fedora Release Engineering <releng@fedoraproject.org> - 3.19.0-4
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_36_Mass_Rebuild
+
+* Wed Jul 21 2021 Fedora Release Engineering <releng@fedoraproject.org> - 3.19.0-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_35_Mass_Rebuild
+
+* Mon May 17 2021 Mikolaj Izdebski <mizdebsk@redhat.com> - 3.19.0-2
+- Bootstrap build
+- Non-bootstrap build
+
+* Tue Jan 26 2021 Fedora Release Engineering <releng@fedoraproject.org> - 3.17.2-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_34_Mass_Rebuild
+
+* Tue Jan 26 2021 Marian Koncek <mkoncek@redhat.com> - 3.19.0-1
+- Update to upstream version 3.19.0
+
+* Wed Jan 20 2021 Marian Koncek <mkoncek@redhat.com> - 3.18.1-1
+- Update to upstream version 3.18.1
+
+* Fri Oct 16 2020 Fabio Valentini <decathorpe@gmail.com> - 3.17.2-1
+- Update to version 3.17.2.
+
+* Mon Sep 21 2020 Marian Koncek <mkoncek@redhat.com> - 3.17.2-1
+- Update to upstream version 3.17.2
+
+* Sun Aug 23 2020 Fabio Valentini <decathorpe@gmail.com> - 3.17.0-1
+- Update to version 3.17.0.
+
+* Wed Jul 29 2020 Marian Koncek <mkoncek@redhat.com> - 3.16.1-1
+- Update to upstream version 3.16.1
+
+* Mon Jul 27 2020 Fedora Release Engineering <releng@fedoraproject.org> - 3.16.1-5
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_33_Mass_Rebuild
+
+* Tue Jul 21 2020 Markku Korkeala <markku.korkeala@iki.fi> - 3.16.1-4
+- Remove profiles from pom.xml.
+
+* Fri Jul 10 2020 Jiri Vanek <jvanek@redhat.com> - 3.16.1-3
+- Rebuilt for JDK-11, see https://fedoraproject.org/wiki/Changes/Java11
+
+* Wed May 13 2020 Fabio Valentini <decathorpe@gmail.com> - 3.16.1-2
+- Fix artifact generation by removing antrun plugin again.
+
+* Tue May 12 2020 Fabio Valentini <decathorpe@gmail.com> - 3.16.1-1
+- Update to version 3.16.1.
+
+* Tue Jan 28 2020 Fedora Release Engineering <releng@fedoraproject.org> - 3.8.0-7
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
+
+* Wed Nov 20 2019 Marian Koncek <mkoncek@redhat.com> - 3.14.0-1
+- Update to upstream version 3.14.0
+
+* Tue Nov 05 2019 Mikolaj Izdebski <mizdebsk@redhat.com> - 3.13.2-2
+- Mass rebuild for javapackages-tools 201902
+
+* Fri Sep 13 2019 Fabio Valentini <decathorpe@gmail.com> - 3.8.0-6
+- Remove dependency on memoryfilesystem.
+
+* Tue Aug 06 2019 Marian Koncek <mkoncek@redhat.com> - 3.13.2-1
+- Update to upstream version 3.13.2
+
+* Wed Jul 24 2019 Fedora Release Engineering <releng@fedoraproject.org> - 3.8.0-5
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_31_Mass_Rebuild
+
+* Thu Jun 06 2019 Marian Koncek <mkoncek@redhat.com> - 3.12.2-1
+- Update to upstream version 3.12.2
+
+* Fri May 24 2019 Mikolaj Izdebski <mizdebsk@redhat.com> - 3.8.0-3
+- Mass rebuild for javapackages-tools 201901
+
+* Thu Jan 31 2019 Fedora Release Engineering <releng@fedoraproject.org> - 3.8.0-4
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_30_Mass_Rebuild
+
+* Thu Jul 12 2018 Fedora Release Engineering <releng@fedoraproject.org> - 3.8.0-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_29_Mass_Rebuild
+
+* Wed Feb 07 2018 Fedora Release Engineering <releng@fedoraproject.org> - 3.8.0-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_28_Mass_Rebuild
+
+* Fri Jul 28 2017 Mat Booth <mat.booth@redhat.com> - 3.8.0-1
+- Update to latest version of assertj
+- Disable tests due to missing deps in Fedora
+
+* Wed Jul 26 2017 Fedora Release Engineering <releng@fedoraproject.org> - 2.2.0-4
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_27_Mass_Rebuild
+
+* Mon Feb 06 2017 Michael Simacek <msimacek@redhat.com> - 2.2.0-3
+- Add conditional for memoryfilesystem
+
+* Wed Feb 03 2016 Fedora Release Engineering <releng@fedoraproject.org> - 2.2.0-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_24_Mass_Rebuild
+
+* Wed Sep 02 2015 Roman Mohr <roman@fenkhuber.at> - 2.2.0-1
+- Initial packaging
