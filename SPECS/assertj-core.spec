@@ -2,11 +2,14 @@
 
 Name:           assertj-core
 Version:        3.19.0
-Release:        9%{?dist}
+Release:        9%{?dist}.1
 Summary:        Library of assertions similar to fest-assert
 License:        ASL 2.0
 URL:            https://joel-costigliola.github.io/assertj/
 Source0:        https://github.com/joel-costigliola/assertj-core/archive/assertj-core-%{version}.tar.gz
+
+# https://github.com/assertj/assertj/commit/77081dc5eb107141df80f95bd0149b468e451341
+Patch0:         assertj-core-3.19.0-CVE-2026-24400.patch
 
 BuildArch:      noarch
 ExclusiveArch:  aarch64 ppc64le s390x x86_64 noarch
@@ -34,6 +37,7 @@ This package provides API documentation for %{name}.
 
 %prep
 %setup -q -n assertj-core-assertj-core-%{version}
+%patch -P0 -p1
 
 %pom_remove_parent
 %pom_xpath_inject "pom:project" "<groupId>org.assertj</groupId>"
@@ -72,6 +76,10 @@ rm -r src/test/java/org/assertj/core/internal/{Paths*.java,paths}
 %license LICENSE.txt
 
 %changelog
+* Thu Jun 25 2026 RHEL Packaging Agent <redhat-ymir-agent@redhat.com> - 3.19.0-9.1
+- Fix CVE-2026-24400: prevent XXE attacks in XmlStringPrettyFormatter
+- Resolves: RHEL-183484
+
 * Sun Nov 24 2024 Marián Konček <mkoncek@redhat.com> - 3.19.0-9
 - Do not install CONTRIBUTING.md in javadoc package
 
