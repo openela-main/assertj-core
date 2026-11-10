@@ -2,7 +2,7 @@
 
 Name:           assertj-core
 Version:        3.24.2
-Release:        9%{?dist}.1
+Release:        10%{?dist}
 Summary:        Library of assertions similar to fest-assert
 License:        Apache-2.0
 URL:            https://joel-costigliola.github.io/assertj/
@@ -84,9 +84,9 @@ This package provides API documentation for %{name}.
 %license LICENSE.txt
 
 %changelog
-* Thu Jun 25 2026 RHEL Packaging Agent <redhat-ymir-agent@redhat.com> - 3.24.2-9.1
+* Thu Jun 25 2026 RHEL Packaging Agent <redhat-ymir-agent@redhat.com> - 3.24.2-10
 - Fix CVE-2026-24400: add XXE protection to XmlStringPrettyFormatter
-- Resolves: RHEL-183469
+- Resolves: RHEL-208838
 
 * Tue Oct 29 2024 Troy Dawson <tdawson@redhat.com> - 3.24.2-9
 - Bump release for October 2024 mass rebuild:
